@@ -170,6 +170,9 @@ class Realm:
                         (job_id)
                 raise ValueError(msg)
 
+        # Enforce that queue_id is a string, due to JSON constraints
+        queue_id = str(queue_id)
+
         # update the job's queue record
         job[JOB_QUEUES].add(queue_id)
 
@@ -215,7 +218,7 @@ class Realm:
     @serialise
     def clear_queue(self, queue_id):
         """remove all jobs from the given queue"""
-        queue = self.queues.get(queue_id, None)
+        queue = self.queues.get(str(queue_id), None)
         if queue is None:
             raise ValueError("Queue '%s' does not exist" % queue_id)
 
@@ -266,6 +269,8 @@ class Realm:
         self._save_config()
 
     def _set_queue_lease_time(self, queue_id, lease_time):
+        # Enforce queue to be a string due to JSON constraints
+        queue_id = str(queue_id)
         queue = self.queues.get(queue_id, None)
         if queue is None:
             self._create_queue(queue_id, lease_time)
@@ -294,6 +299,8 @@ class Realm:
             yaml.dump(realm_config, f, default_flow_style=False)
 
     def _create_queue(self, queue_id, lease_time):
+        # Enforce that queue names are string, due to JSON constraints on dicts
+        queue_id = str(queue_id)
         queue = OrderedDict()
         self.queues[queue_id] = queue
         self.queue_lease_time[queue_id] = lease_time
