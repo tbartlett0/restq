@@ -31,7 +31,8 @@ class TestApi(unittest.TestCase):
             self.assertEquals(resp.status_int, 200)
             body = json.loads(str(resp.body))
             for k,v in body.iteritems():
-                self.assertEquals([1, int(k)], v)
+                # Queue ID should have been converted to a string
+                self.assertEquals(['1', int(k)], v)
 
             #remove the job
             resp = self.app.delete("/realm/job/%d" % i)
@@ -42,7 +43,7 @@ class TestApi(unittest.TestCase):
         self.assertEquals(resp.status_int, 200)
         body = json.loads(resp.body)
         for k,v in body.iteritems():
-            self.assertEquals([1,int(k)], v)
+            self.assertEquals(['1',int(k)], v)
 
         #remove the remaining jobs
         for i in range(50, 100):
